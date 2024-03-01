@@ -1,41 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
+
   {
-    path: '/login',
-    name: 'login',
+    path: '/Callout',
+    name: 'Callout',
     // 路由懒加载
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+    component: () => import(/* webpackChunkName: "test" */ '../views/Callout.vue')
+  },
+
+  {
+    path: '/Connection',
+    name: 'Connection',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "Contest2" */ '../views/Connection/Connection.vue')
   },
   {
-    path: '/test',
-    name: 'test',
+    path: '/PrintingPdf',
+    name: 'PrintingPdf',
     // 路由懒加载
-    component: () => import(/* webpackChunkName: "test" */ '../views/test.vue')
+    component: () => import(/* webpackChunkName: "dayin2" */ '../views/Printing/PrintingPdf.vue')
   },
   {
-    path: '/test1',
-    name: 'test1',
+    path: '/uploadTest',
+    name: 'uploadTest',
     // 路由懒加载
-    component: () => import(/* webpackChunkName: "test1" */ '../views/test1.vue')
-  },
-  {
-    path: '/test3',
-    name: 'test3',
-    // 路由懒加载
-    component: () => import(/* webpackChunkName: "test3" */ '../views/test3.vue')
-  },
-  {
-    path: '/test4',
-    name: 'test4',
-    // 路由懒加载
-    component: () => import(/* webpackChunkName: "test4" */ '../views/test4.vue')
-  },
-  {
-    path: '/Con/test1',
-    name: 'Contest1',
-    // 路由懒加载
-    component: () => import(/* webpackChunkName: "Contest1" */ '../views/Connection/conTest1.vue')
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/uploadTest.vue')
   },
 ]
 

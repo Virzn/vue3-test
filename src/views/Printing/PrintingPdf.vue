@@ -1,654 +1,654 @@
 <template>
   <div class="wholeDiv">
     <div>
-      <el-button size="small" type="text" @click="getPdf('demo','tst1111')" style="float: right; margin-right: 60px">
-            下载
-          </el-button>
       <a-card class="">
-        <h1>题目列表</h1>
+        <div style="top: 20px; float: right; right: 1%; position: absolute">
+          <el-button type="primary" @click="outPutPdfFn()"> 下载 </el-button>
+        </div>
         <div id="demo" ref="report">
-          <div v-for="(item, index) in cognitiveList" :key="item.questionId" class="quesWholeDiv">
+          <el-card v-show="cognitiveList.length > 0">
             <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共
-                <span style="margin: 0 5px 0 5px">
-                  {{ item.questionSumscore }}
-                </span>
-                分
-              </span>
-            </div>
-            <div>
-              <div>
-                <span class="quesNameSpan" v-html="item.questionName"></span>
-              </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
-                  </div>
-                </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"></div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
-                      </div>
-                    </div>
-                  </div>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">认知识别题 {{ data.cognitiveTotalscore }} 分</span>
                 </div>
               </div>
-            </div>
-          </div>
-          <div v-for="(item, index) in measureList" :key="item.questionId" class="quesWholeDiv">
-            <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共 {{ item.questionSumscore }} 分
-              </span>
-            </div>
-            <div>
-              <div>
-                <span class="quesNameSpan" v-html="item.questionName"></span>
-              </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
-                  </div>
+              <div v-for="(item, index) in cognitiveList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共
+                    <span style="margin: 0 5px 0 5px">
+                      {{ item.questionSumscore }}
+                    </span>
+                    分
+                  </span>
                 </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
+                <div>
+                  <div class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
                   </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"></div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div v-for="(item, index) in objectJudgeList" :key="item.questionId" class="quesWholeDiv">
+          </el-card>
+          <el-card v-show="measureList.length > 0">
             <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共 {{ item.questionSumscore }} 分
-              </span>
-            </div>
-            <div>
-              <div>
-                <span class="quesNameSpan" v-html="item.questionName"></span>
-              </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
-                  </div>
-                </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"></div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
-                      </div>
-                    </div>
-                  </div>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">量器具使用题 {{ data.measureTotalscore }} 分</span>
                 </div>
               </div>
-            </div>
-          </div>
-          <div v-for="(item, index) in objectSelectList" :key="item.questionId" class="quesWholeDiv">
-            <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共 {{ item.questionSumscore }} 分
-              </span>
-            </div>
-            <div>
-              <div>
-                <span class="quesNameSpan" v-html="item.questionName"></span>
-              </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
-                  </div>
+              <div v-for="(item, index) in measureList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共 {{ item.questionSumscore }} 分
+                  </span>
                 </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
+                <div>
+                  <div class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
                   </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"></div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div v-for="(item, index) in objectMultipleList" :key="item.questionId" class="quesWholeDiv">
+          </el-card>
+          <el-card v-show="objectJudgeList.length > 0">
             <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共 {{ item.questionSumscore }} 分
-              </span>
-            </div>
-            <div>
-              <div>
-                <span class="quesNameSpan" v-html="item.questionName"></span>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">客观题（判断） {{ data.oJudgeTotalscore }} 分</span>
+                </div>
               </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
-                  </div>
+              <div v-for="(item, index) in objectJudgeList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共 {{ item.questionSumscore }} 分
+                  </span>
                 </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
+                <div>
+                  <div class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
                   </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"></div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div v-for="(item, index) in fictitiousList" :key="item.questionId" class="quesWholeDiv">
-            <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共 {{ item.questionSumscore }} 分
-              </span>
-            </div>
-            <div>
-              <div v-if="!(item.questionType == '表格判断题')">
-                <span class="quesNameSpan" v-html="item.questionName"></span>
-              </div>
-              <div v-if="item.questionType == '表格判断题'">
-                <span class="TableJudgeSpan">点检部位：{{ item.questionName.checkLocation }}</span><br />
-                <span class="TableJudgeSpan">点检项目：{{ item.questionName.checkProject }}</span><br />
-                <span class="TableJudgeSpan">点检要求及标准：{{ item.questionName.checkRequest }}</span><br />
-                <span class="TableJudgeSpan">点检方法：{{ item.questionName.checkMethod }}</span>
-              </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
-                  </div>
-                </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"></div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div v-for="(item, index) in practicalList" :key="item.questionId" class="quesWholeDiv">
+          </el-card>
+          <el-card v-show="objectSelectList.length > 0">
             <div>
-              <span class="quesTitleSpan">
-                {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
-                <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput"
-                  @input="scoreChange(item)" />
-                分，共 {{ item.questionSumscore }} 分
-              </span>
-            </div>
-            <div>
-              <div>
-                <span class="quesNameSpan" v-html="item.questionName"></span>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">客观题（单项选择） {{ data.oSelectTotalscore }} 分</span>
+                </div>
               </div>
-              <div class="optionAnswerDiv">
-                <div v-show="item.questionType == '文字单选题' ||
-                  item.questionType == '图片单选题' ||
-                  item.questionType == '视频题'
-                  " class="singleOptionsDiv">
-                  <span class="singleOptionSpan"> 选项：</span>
-                  <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist"
-                    :key="singleItem.options">
-                    <el-checkbox :checked="item.questionAnswer.indexOf(
-                      String.fromCharCode(index + 65)
-                    ) !== -1
-                      " class="singleOptionCheck" disabled></el-checkbox>
-                    <span v-html="singleItem"></span>
-                    <!-- {{ `${index + 1}.${singleItem}` }} -->
+              <div v-for="(item, index) in objectSelectList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共 {{ item.questionSumscore }} 分
+                  </span>
+                </div>
+                <div>
+                  <div class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
                   </div>
-                </div>
-                <div v-show="item.questionType == '文字多选题' ||
-                  item.questionType == '图片多选题'
-                  " class="multipleOptionsDiv">
-                  <div>
-                    <span class="multipleOptionSpan"> 选项：</span>
-                    <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist"
-                      :key="multiplItem.options">
-                      <el-checkbox :checked="item.questionAnswer.indexOf(
-                        String.fromCharCode(index + 65)
-                      ) !== -1
-                        " class="multipleOptionCheck" disabled></el-checkbox>
-                      <span v-html="multiplItem"></span>
-                      <!-- {{ `${index + 1}.${multiplItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
-                  <div>
-                    <span class="blanksOptionSpan">参考答案：</span>
-                    <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
-                      <span v-html="blanksItem"></span>
-                      <!-- {{ `${index + 1} . ${blanksItem}` }} -->
-                    </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '判断题' ||
-                  item.questionType == '表格判断题'
-                  " class="judgeOptionsDiv">
-                  <div>
-                    <span class="judgeOptionSpan">参考答案：</span>
-                    <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv">
-                  <div></div>
-                </div>
-                <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
-                  <div>
-                    <div>
-                      <div class="pConnectOptionDiv" v-for="(
-                          pConnectionItem, index
-                        ) in item.questionAnswerList" :key="pConnectionItem.des">
-                        <span v-html="pConnectionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
                       </div>
                     </div>
-                  </div>
-                </div>
-                <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
-                  <div>
-                    <div>
-                      <div class="lRecognitionOptionDiv" v-for="(
-                          lRecognitionItem, index
-                        ) in item.questionAnswerList" :key="lRecognitionItem.des">
-                        <span v-html="lRecognitionItem.value"></span>
-                        <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+          </el-card>
+          <el-card v-show="objectMultipleList.length > 0">
+            <div>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">客观题（多选选择） {{ data.oMultipleTotalscore }} 分</span>
+                </div>
+              </div>
+              <div v-for="(item, index) in objectMultipleList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共 {{ item.questionSumscore }} 分
+                  </span>
+                </div>
+                <div>
+                  <div class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
+                  </div>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-card>
+          <el-card v-show="fictitiousList.length > 0">
+            <div>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">虚拟交互题 {{ data.fictitiousTotalscore }} 分</span>
+                </div>
+              </div>
+              <div v-for="(item, index) in fictitiousList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共 {{ item.questionSumscore }} 分
+                  </span>
+                </div>
+                <div>
+                  <div v-if="!(item.questionType == '表格判断题')" class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
+                  </div>
+                  <div v-if="item.questionType == '表格判断题'" class="sign">
+                    <span class="TableJudgeSpan">点检部位：{{ item.questionName.checkLocation }}</span
+                    ><br />
+                    <span class="TableJudgeSpan">点检项目：{{ item.questionName.checkProject }}</span
+                    ><br />
+                    <span class="TableJudgeSpan">点检要求及标准：{{ item.questionName.checkRequest }}</span
+                    ><br />
+                    <span class="TableJudgeSpan">点检方法：{{ item.questionName.checkMethod }}</span>
+                  </div>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-card>
+          <el-card v-show="practicalList.length > 0">
+            <div>
+              <div class="group1TitleDiv sign">
+                <div class="group1TitleDiv1">
+                  <span style="font-size: 20px">实际操作题 {{ data.practicalTotalscore }} 分</span>
+                </div>
+              </div>
+              <div v-for="(item, index) in practicalList" :key="item.questionId" class="quesWholeDiv">
+                <div class="sign">
+                  <span class="quesTitleSpan">
+                    {{ index + 1 }}.【 {{ item.questionType }} 】 每小题
+                    <el-input v-model="item.questionScore" placeholder="分数" class="quesTitleScoreInput" />
+                    分，共 {{ item.questionSumscore }} 分
+                  </span>
+                </div>
+                <div>
+                  <div class="sign">
+                    <span class="quesNameSpan" v-html="item.questionName"></span>
+                  </div>
+                  <div class="optionAnswerDiv sign">
+                    <div
+                      v-show="item.questionType == '文字单选题' || item.questionType == '图片单选题' || item.questionType == '视频题'"
+                      class="singleOptionsDiv"
+                    >
+                      <span class="singleOptionSpan"> 选项：</span>
+                      <div class="singleOptionDiv" v-for="(singleItem, index) in item.questionChoselist" :key="singleItem.options">
+                        <el-checkbox
+                          :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                          class="singleOptionCheck"
+                          disabled
+                        ></el-checkbox>
+                        <span v-html="singleItem"></span>
+                        <!-- {{ `${index + 1}.${singleItem}` }} -->
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '文字多选题' || item.questionType == '图片多选题'" class="multipleOptionsDiv">
+                      <div>
+                        <span class="multipleOptionSpan"> 选项：</span>
+                        <div class="multipleOptionDiv" v-for="(multiplItem, index) in item.questionChoselist" :key="multiplItem.options">
+                          <el-checkbox
+                            :checked="item.questionAnswer.indexOf(String.fromCharCode(index + 65)) !== -1"
+                            class="multipleOptionCheck"
+                            disabled
+                          ></el-checkbox>
+                          <span v-html="multiplItem"></span>
+                          <!-- {{ `${index + 1}.${multiplItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '填空题'" class="blanksOptionsDiv">
+                      <div>
+                        <span class="blanksOptionSpan">参考答案：</span>
+                        <div class="blanksOptionDiv" v-for="blanksItem in item.questionAnswer" :key="blanksItem.blanks">
+                          <span v-html="blanksItem"></span>
+                          <!-- {{ `${index + 1} . ${blanksItem}` }} -->
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '判断题' || item.questionType == '表格判断题'" class="judgeOptionsDiv">
+                      <div>
+                        <span class="judgeOptionSpan">参考答案：</span>
+                        <span class="judgeAnswerSpan" v-html="item.questionAnswer"></span>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '图片交互题'" class="picConOptionsDiv"> </div>
+                    <div v-show="item.questionType == '图片连线题'" class="pConnectionsDiv">
+                      <div>
+                        <div>
+                          <div class="pConnectOptionDiv" v-for="(pConnectionItem, index) in item.questionAnswerList" :key="pConnectionItem.des">
+                            <span v-html="pConnectionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="pConnectionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div v-show="item.questionType == '连线识别题'" class="lRecognitionDiv">
+                      <div>
+                        <div>
+                          <div class="lRecognitionOptionDiv" v-for="(lRecognitionItem, index) in item.questionAnswerList" :key="lRecognitionItem.des">
+                            <span v-html="lRecognitionItem.value"></span>
+                            <span style="padding-left: 100px" v-html="lRecognitionItem.des"></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </el-card>
         </div>
       </a-card>
     </div>
@@ -680,7 +680,7 @@
 import { Delete } from "@element-plus/icons-vue";
 import { ref, reactive, nextTick } from "vue";
 import { ElTable } from "element-plus";
-import { getPdf } from "@/utils/htmlToPdf2";
+// import { getPdf } from "@/utils/htmlToPdf2";
 import JsPDF from "jspdf";
 import html2Canvas from "html2canvas";
 
@@ -841,16 +841,7 @@ let practicalList = ref([]);
 let tableData = reactive([]);
 
 // 存储已选择试题信息
-let quesInfo = reactive([]);
-
-let queryInfo = {
-  page: 1,
-  rows: 10,
-  questionGenre: "",
-  questionType: "",
-  questionDiff: "",
-  courseName: "",
-};
+let quesInfo = reactive([])
 
 // 标识题目类型是否存在数据
 // 所有选择题型
@@ -872,9 +863,6 @@ let fictitiousChose = ref("0");
 // 实际操作类型数量
 let practicalChose = ref("0");
 
-let examinationId = ref("");
-
-
 let report = ref(null);
 
 
@@ -887,731 +875,1056 @@ function getExaminaInfo() {
 
   data.dataSource = [
     {
-      questionGenre: "认知识别题",
-      eventId: "",
-      questionGenreId: "1",
-      questionId: "1684806290515111937",
-      questionKnowpoint: "实物认知",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请在机械单元的认知板上找到【微型断路器】部件，在下面选项中点击对应的编号</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "A",
-      questionChoselist:
-        "<p>01</p>$<p>02</p>$<p>03</p>$<p>04</p>$<p>05</p>$<p>06</p>$<p>07</p>$<p>08</p>$<p>09</p>$<p>10</p>$<p>11</p>",
-      questionSumscore: "5",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "认知识别题",
+        "questionId": "1684806290515111937",
+        "questionKnowpoint": "实物认知",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>01</p>$<p>02</p>$<p>03</p>$<p>04</p>$<p>05</p>$<p>06</p>$<p>07</p>$<p>08</p>$<p>09</p>$<p>10</p>$<p>11</p>",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "1",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "21001",
+        "questionScore": "",
+        "questionName": "<p>请在电气单元的认知板上找到【微型断路器】部件，在下面选项中点击对应的编号</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "A",
+        "data10": "1",
+        "questionSumscore": "5",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "认知识别题",
-      eventId: "",
-      questionGenreId: "1",
-      questionId: "1684808220377296897",
-      questionKnowpoint: "实物认知",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请在机械单元的认知板上找到【电流互感器】部件，在下面选项中点击对应的编号</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "G",
-      questionChoselist:
-        "<p>01</p>$<p>02</p>$<p>03</p>$<p>04</p>$<p>05</p>$<p>06</p>$<p>07</p>$<p>08</p>$<p>09</p>$<p>10</p>$<p>11</p>",
-      questionSumscore: "5",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "量器具使用题",
+        "questionId": "1684813619344125953",
+        "questionKnowpoint": "实物测量",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "2",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>请使用红外测温枪测量【变频电机】机壳温度并将其值输入到对应的输入框中</p>\n<p>测量值：_____℃</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "35",
+        "data10": null,
+        "questionSumscore": "5",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "填空题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "量器具使用题",
-      eventId: "",
-      questionGenreId: "2",
-      questionId: "1684813313235431426",
-      questionKnowpoint: "实物测量",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请使用万用表测量【交流电源】电流值并将其值输入到对应的输入框中</p>\n<p>测量值：_____VAC</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "220",
-      questionChoselist: "",
-      questionSumscore: "5",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "填空题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684813662331547649",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "3",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23002",
+        "questionScore": "",
+        "questionName": "<p>发电、共电、用电要时刻保持平衡,发电量随着供电量的瞬时的增减而 增减</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "错",
+        "data10": "1",
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684813566378455041",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>电力系统中最常见最危险的故障是单相接地故障</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "错",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684814177203335169",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "3",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23007",
+        "questionScore": "",
+        "questionName": "<p>在绝缘监视装置中,运行人员根据三相电压表的读数,可以判断故障相 是那一相</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "对",
+        "data10": "1",
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "量器具使用题",
-      eventId: "",
-      questionGenreId: "2",
-      questionId: "1684813619344125953",
-      questionKnowpoint: "实物测量",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请使用红外测温枪测量【变频电机】机壳温度并将其值输入到对应的输入框中</p>\n<p>测量值：_____℃</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "35",
-      questionChoselist: "",
-      questionSumscore: "5",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "填空题",
-      questionAnalysis: "",
+        "questionGenre": "实际操作题",
+        "questionId": "1684814322154287106",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>风门阀开极限故障</p>$<p>风门阀关极限故障</p>$<p>风机电源故障</p>$<p>风机设备故障</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "7",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>请启动风机控制系统中的【风机】，若无法启动请指出设备故障原因</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "A",
+        "data10": null,
+        "questionSumscore": "20",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684813962354307074",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>变压器发生故障时,根据气体继电器的颜色气味可燃性可以判断故障类 型和原因</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "对",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684814331339812865",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "3",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23009",
+        "questionScore": "",
+        "questionName": "<p>输配电线路的额定电压与受电设备的额定电压规定得相同</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "对",
+        "data10": "1",
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684814069824958466",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>并联电容器在电力系统的作用是补偿容性负载改善电压质量降低线路 损耗提高功率因数</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "错",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684814623443726338",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>中性点不接地系统发生单相接地时三相设备的正常工作关系并未受到 影响,不必进行处理</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "错",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684814177203335169",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>在绝缘监视装置中,运行人员根据三相电压表的读数,可以判断故障相 是那一相</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "对",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684814818940235777",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>高压断路器应有防止高压连续多次分合间的跳跃闭键措施</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "对",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684814469651181569",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>中性点运行方式的选择主要取决于单相接地时电气设备绝缘要求及供 电的可靠性</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "对",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684815587894571009",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>变压器的输出功率为0时效率为0,随着输的功率增加效率一直上升</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "错",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "实际操作题",
-      eventId: "",
-      questionGenreId: "7",
-      questionId: "1684814567693037570",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请停止输送带控制系统中的【皮带传动机构】，若无法及时停止请指出设备故障原因</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "B",
-      questionChoselist:
-        "<p>制动器锁紧装置过紧</p>$<p>制动器锁紧装置过松</p>$<p>制动器供电故障</p>$<p>制动器设备故障</p>",
-      questionSumscore: "10",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684815913422893057",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>电压互感器一次侧有一端必需接地</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "错",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684814818940235777",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>高压断路器应有防止高压连续多次分合间的跳跃闭键措施</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "对",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684815961934213122",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>通过断路器的极限电流峰值应大于短路瞬间最大冲击电流</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "对",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "实际操作题",
-      eventId: "",
-      questionGenreId: "7",
-      questionId: "1684814916646547458",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请启动风机控制系统中的【电动风门阀】，若无法启动请指出设备故障原因</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "A",
-      questionChoselist:
-        "<p>风门阀开极限故障</p>$<p>风门阀关极限故障</p>$<p>风门阀电源故障</p>$<p>风门阀设备故障</p>",
-      questionSumscore: "10",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684816497903349761",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>三相短路电流的最大值出现在短路0.1秒的时间</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "错",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684815537835552770",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>三相变压器一次侧额定电压值线电压,二次侧电压值相电压</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "错",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（判断）",
+        "questionId": "1684816652576698369",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "3",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>两相电流差式接线,使用于中性点接地的变压器、电动机和线路的相间 保护</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "错",
+        "data10": null,
+        "questionSumscore": "1",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684815645155209217",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>变压器的铜损与铁损相等到时,变压器的效率达到最大值</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "错",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（多项选择）",
+        "questionId": "1684818424061964289",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.使电力设备的容量得到充分利用</p>$<p>.降低电能在传输中过程中的功率损耗</p>$<p>.使线路上电压降△(增大</p>$<p>.提高供、用电的可靠性</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "5",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>在电力系统中提高功率因数的意义有()。</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "ABD",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字多选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684816497903349761",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>三相短路电流的最大值出现在短路0.1秒的时间</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "错",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（多项选择）",
+        "questionId": "1684819440635424770",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.操作过电压</p>$<p>.切合空长线路</p>$<p>.弧光接地过电压&nbsp;</p>$<p>.工频过电压</p>$<p>谐振过电压</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "5",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>内部过电压分为( )</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "ADE",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字多选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（判断）",
-      eventId: "",
-      questionGenreId: "3",
-      questionId: "1684816599158042625",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>电力系统发生短路故障,除故障点出现某种不对称外、其它都分仍是对 称的</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "对",
-      questionChoselist: "",
-      questionSumscore: "1",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "判断题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（多项选择）",
+        "questionId": "1684820888618217474",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.可靠性</p>$<p>.灵活性</p>$<p>.操作方便</p>$<p>.经济性</p>$<p>.有扩建可能性</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "5",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>工厂变配电所对电气主接线要求是()</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "ABCDE",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字多选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（多项选择）",
-      eventId: "",
-      questionGenreId: "5",
-      questionId: "1684818424061964289",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>在电力系统中提高功率因数的意义有()。</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "ABD",
-      questionChoselist:
-        "<p>.使电力设备的容量得到充分利用</p>$<p>.降低电能在传输中过程中的功率损耗</p>$<p>.使线路上电压降△(增大</p>$<p>.提高供、用电的可靠性</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字多选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（多项选择）",
+        "questionId": "1684824928978677761",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.确定电压比</p>$<p>.判断铁质量</p>$<p>.测量励磁电流</p>$<p>.确定线圈有无匝间短路故障</p>$<p>测量空载换耗</p>",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "5",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23057",
+        "questionScore": "",
+        "questionName": "<p>变压器空载试验目的是()</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "ABCE",
+        "data10": "1",
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字多选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（多项选择）",
-      eventId: "",
-      questionGenreId: "5",
-      questionId: "1684819159965184001",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>配电变压器&ldquo;三位一体&rdquo;的接地是指()应接在 一起,然后再与接地装置相连 接</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "ACE",
-      questionChoselist:
-        "<p>.变压器金属外壳</p>$<p>.屏蔽接地</p>$<p>.避雷器,引下线</p>$<p>.避雷针引下线</p>$<p>.变压器的低压侧中心点</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字多选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684824979591344130",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.过补偿&nbsp;</p>$<p>.欠补偿&nbsp;</p>$<p>.全补偿&nbsp;</p>$<p>.任意</p>",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "4",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23058",
+        "questionScore": "",
+        "questionName": "<p>中性点经消弧线圈接地运行方式一般采用( &nbsp;)方式。</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "A",
+        "data10": "1",
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（多项选择）",
-      eventId: "",
-      questionGenreId: "5",
-      questionId: "1684820207253532673",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>供电系统对保护装置要求是( )</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "ABCE",
-      questionChoselist:
-        "<p>.选择性</p>$<p>.速动性</p>$<p>.可靠性</p>$<p>.扩展性&nbsp;</p>$<p>.灵敏性</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字多选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684825888673181698",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.1.5&nbsp;</p>$<p>.0.5&nbsp;</p>$<p>0.1</p>$<p>0.2</p>",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "4",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23059",
+        "questionScore": "",
+        "questionName": "<p>过电流保护装置为了保证装置具有足够的反应故障能力,其最小灵敏度要求KSmin =( )。</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "A",
+        "data10": "1",
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（多项选择）",
-      eventId: "",
-      questionGenreId: "5",
-      questionId: "1684820603158081538",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>电流互感器产生误差有变比误差、角误差,其原因是( )</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "ABCD",
-      questionChoselist:
-        "<p>.一次电流大小有关</p>$<p>.铁芯质量有关&nbsp;</p>$<p>.结构尺寸有关&nbsp;</p>$<p>.二次负 载阻抗有关</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字多选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684828087138594817",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>3</p>$<p>2</p>$<p>&radic;3&nbsp;</p>$<p>I</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>中性点不接地系统相接地事故、接地极对地电压为零,非接地极对地电压升高( ) 倍。</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "C",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684825452150992898",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>短路保护的操作电源可取自( )。</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "B",
-      questionChoselist:
-        "<p>.电压互感器&nbsp;</p>$<p>.电流互感器&nbsp;</p>$<p>.空气开关&nbsp;</p>$<p>.电容器</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684828166901673985",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>&nbsp;设备多少&nbsp;</p>$<p>电压高低&nbsp;</p>$<p>企业规模&nbsp;</p>$<p>负荷大小和距离远近</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>如果本地区有两种以上可供选择的电源电压,选择供电电压的原则是( )</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "D",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（多项选择）",
-      eventId: "",
-      questionGenreId: "5",
-      questionId: "1684826065442123777",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>工厂供电电压等级确定是()</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "BD",
-      questionChoselist:
-        "<p>.电压变化</p>$<p>.供电距离</p>$<p>.负荷大小&nbsp;</p>$<p>.供电容量</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字多选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684828347655204866",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>三相&nbsp;</p>$<p>二相&nbsp;</p>$<p>单相&nbsp;</p>$<p>两极接地</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>对称短路是电力系统中( )短路。</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "A",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684826137944862721",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>以下接地方式属于保护接地的系统是( )。</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "B",
-      questionChoselist:
-        "<p>.变压器的中性点接地&nbsp;</p>$<p>.电机的外壳接地&nbsp;</p>$<p>.把一根金属和地线相连</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684828633543159810",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>一般采用开环运行&nbsp;</p>$<p>&nbsp;一般采用闭环运行</p>$<p>适用于三级负荷</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>环形接线( )</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "A",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684828087138594817",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>中性点不接地系统相接地事故、接地极对地电压为零,非接地极对地电压升高( ) 倍。</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "C",
-      questionChoselist: "<p>3</p>$<p>2</p>$<p>&radic;3&nbsp;</p>$<p>I</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684828652283310082",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>电力系统有确定的电压&nbsp;</p>$<p>所有电器有一个额定电压&nbsp;</p>$<p>额定电压随意确定&nbsp;</p>$<p>&nbsp;应该经过充分论证,由国家主管部门确定</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>确定额定电压的意义( )</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "D",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684828237164654593",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>中性在不接在系统单个接地时应尽快的找出接地点,否则切断电源,主要是考虑 ( )要求。</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "A",
-      questionChoselist:
-        "<p>&nbsp;安全性&nbsp;</p>$<p>&nbsp;可行性&nbsp;</p>$<p>&nbsp;经济性&nbsp;</p>$<p>&nbsp;灵敏度</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684828788229091330",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>三角形排列&nbsp;</p>$<p>&nbsp;水平排列&nbsp;</p>$<p>&nbsp;双层排列</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>三相四线制低压线路的导线多采用( )</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "B",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684828798056345602",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>发电机额定电压比线路额定电压( )</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "A",
-      questionChoselist:
-        "<p>高5%&nbsp;</p>$<p>低5%&nbsp;</p>$<p>&nbsp;相等</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684830566706262017",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>二次额定负载下的电压</p>$<p>一次有额定电流时的电压</p>$<p>一次有额定电压,二次有额定负载时的电压</p>$<p>一次有额定电压,二次空载时电压</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>变压器二次额定电压是( &nbsp;)</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "D",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684829130215862273",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>中性点不接地的系统发生单相接地故障时不变的数据( )</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "A",
-      questionChoselist:
-        "<p>线间电压&nbsp;</p>$<p>非故障相对地电压&nbsp;</p>$<p>故障相对地电流&nbsp;</p>$<p>故障相对地电压</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（单项选择）",
+        "questionId": "1684830755802263553",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>开断正常运行的最大负荷电流</p>$<p>开断最大短路电流</p>$<p>在规定条件下能开断的最大短路电流有效值</p>$<p>额定电流的峰值</p>",
+        "courseId": "1",
+        "data9": null,
+        "data8": null,
+        "eventId": "",
+        "data7": null,
+        "data6": null,
+        "questionGenreId": "4",
+        "data5": null,
+        "data4": null,
+        "data3": null,
+        "data2": null,
+        "data1": null,
+        "questionScore": "",
+        "questionName": "<p>高压断路器的额定开断电流是指断路器( &nbsp;)</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "C",
+        "data10": null,
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字单选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684829264089657346",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>当电源中性点不接地的系统发生单相接地时( )</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "C",
-      questionChoselist:
-        "<p>&nbsp;三相用电设备正常工作关系受到影响</p>$<p>&nbsp;设备不能照常运行&nbsp;</p>$<p>设备仍能照常运行&nbsp;</p>$<p>设备内部立即短路</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "量器具使用题",
+        "questionId": "1724772032960720897",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "2",
+        "data5": "2",
+        "data4": "2",
+        "data3": "266",
+        "data2": "259",
+        "data1": "22002",
+        "questionScore": "",
+        "questionName": "<p>请使用万用表在直流电流测点1上测量【<span style=\"color: #e03e2d;\">直流电源</span>】电流值并将其值输入到对应的输入框中 测量值： &nbsp; &nbsp; A</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "24VDC",
+        "data10": "1",
+        "questionSumscore": "5",
+        "isReturnAnswer": 1,
+        "questionDiff": "初级",
+        "questionType": "填空题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684829382016708609",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName: "<p>变压器的额定电压确定的依据( )</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "B",
-      questionChoselist:
-        "<p>变压器的容量&nbsp;</p>$<p>变压器的允许温升&nbsp;</p>$<p>负载的容量</p>$<p>负载的接线方式</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "客观题（多项选择）",
+        "questionId": "1724774778052997121",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p>.油面高低&nbsp;</p>$<p>.上层油面温度&nbsp;</p>$<p>.外売接地是否良好&nbsp;</p>$<p>.检查套管是否清洁</p>$<p>.声音是否正常F.冷却装置运行情况</p>",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "5",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "23104",
+        "questionScore": "",
+        "questionName": "<p>4.<span style=\"color: #e03e2d;\">变在器在运行时,外部检查的项目检查</span>有()</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "ABCDE",
+        "data10": "1",
+        "questionSumscore": "2",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "文字多选题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684829720857751554",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>电压互感器能将 高电压 变为便于测量的电压( ),使仪表等与高压隔</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "A",
-      questionChoselist:
-        "<p>&nbsp;100V&nbsp;</p>$<p>&nbsp;200V&nbsp;</p>$<p>&nbsp;50V</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "虚拟交互题",
+        "questionId": "1724775998046007297",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "6",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "24006",
+        "questionScore": "",
+        "questionName": "{\"checkLocation\":\"风机控制系统\",\"checkProject\":\"交流接触器\",\"checkRequest\":\"接线端子外观完好\",\"checkMethod\":\"目视\"}",
+        "courseName": "电气单元",
+        "questionAnswer": "正常",
+        "data10": "1",
+        "questionSumscore": "4",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "表格判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "客观题（单项选择）",
-      eventId: "",
-      questionGenreId: "4",
-      questionId: "1684829847366348802",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>二次设备是指对( &nbsp;)的工作进行监、测量、操作和控制的设备</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "C",
-      questionChoselist:
-        "<p>一次设备</p>$<p>一、二次设备&nbsp;</p>$<p>&nbsp;二次设备</p>",
-      questionSumscore: "2",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "文字单选题",
-      questionAnalysis: "",
+        "questionGenre": "虚拟交互题",
+        "questionId": "1724776463647305730",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "6",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "24007",
+        "questionScore": "",
+        "questionName": "{\"checkLocation\":\"风机控制系统\",\"checkProject\":\"24V电源\",\"checkRequest\":\"电源指示灯显示正常，供电电压正常\",\"checkMethod\":\"目视、检测\"}",
+        "courseName": "电气单元",
+        "questionAnswer": "正常",
+        "data10": "1",
+        "questionSumscore": "4",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "表格判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "虚拟交互题",
-      eventId: "",
-      questionGenreId: "6",
-      questionId: "1684877845416849410",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        '{"checkLocation":"风机控制柜","checkProject":"柜内照明","checkRequest":"打开柜门后柜内有照明","checkMethod":"目视"}',
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "异常",
-      questionChoselist: "",
-      questionSumscore: "4",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "表格判断题",
-      questionAnalysis: "",
+        "questionGenre": "虚拟交互题",
+        "questionId": "1724776977990610945",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "6",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "24010",
+        "questionScore": "",
+        "questionName": "{\"checkLocation\":\"风机控制系统\",\"checkProject\":\"变频电机\",\"checkRequest\":\"电机外观完好无破损\",\"checkMethod\":\"目视\"}",
+        "courseName": "电气单元",
+        "questionAnswer": "正常",
+        "data10": "1",
+        "questionSumscore": "4",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "表格判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "虚拟交互题",
-      eventId: "",
-      questionGenreId: "6",
-      questionId: "1684888657745358849",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        '{"checkLocation":"风机控制系统","checkProject":"24V电源","checkRequest":"电源指示灯显示正常，供电电压正常","checkMethod":"目视、检测"}',
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "正常",
-      questionChoselist: "",
-      questionSumscore: "4",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "表格判断题",
-      questionAnalysis: "",
+        "questionGenre": "虚拟交互题",
+        "questionId": "1724777120647278594",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "6",
+        "data5": "0",
+        "data4": "0",
+        "data3": "0",
+        "data2": "0",
+        "data1": "24011",
+        "questionScore": "",
+        "questionName": "{\"checkLocation\":\"风机控制系统\",\"checkProject\":\"变频器\",\"checkRequest\":\"屏幕正常显示，无故障代码\",\"checkMethod\":\"目视\"}",
+        "courseName": "电气单元",
+        "questionAnswer": "正常",
+        "data10": "1",
+        "questionSumscore": "4",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "表格判断题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "虚拟交互题",
-      eventId: "",
-      questionGenreId: "6",
-      questionId: "1684889539828461570",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        '{"checkLocation":"风机控制系统","checkProject":"变频器","checkRequest":"屏幕正常显示，无故障代码","checkMethod":"目视"}',
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "正常",
-      questionChoselist: "",
-      questionSumscore: "4",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "表格判断题",
-      questionAnalysis: "",
+        "questionGenre": "认知识别题",
+        "questionId": "1742031053427724289",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "<p><img id=\"bigImg\" src=\"http://101.42.247.53:8080/jeecg-boot/sys/common/static/jeditor/批注2023-12-28162416_1704167508395.png\" /></p>$<p><img id=\"bigImg\" src=\"http://101.42.247.53:8080/jeecg-boot/sys/common/static/jeditor/批注2023-12-28162416_1704167519153.png\" /></p>$<p><img id=\"bigImg\" src=\"http://101.42.247.53:8080/jeecg-boot/sys/common/static/jeditor/批注2023-12-28162416_1704167529290.png\" /></p>$<p><img id=\"bigImg\" src=\"http://101.42.247.53:8080/jeecg-boot/sys/common/static/jeditor/批注2023-12-28162416_1704167534620.png\" /></p>",
+        "courseId": "1",
+        "data9": "111",
+        "data8": "111",
+        "eventId": "",
+        "data7": "111",
+        "data6": "111",
+        "questionGenreId": "1",
+        "data5": "111",
+        "data4": "111",
+        "data3": "111",
+        "data2": "111",
+        "data1": "111",
+        "questionScore": "",
+        "questionName": "<p>图片连线</p>",
+        "courseName": "电气单元",
+        "questionAnswer": "1图片$2图片$3图片$4图片",
+        "data10": "111",
+        "questionSumscore": "",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "图片连线题",
+        "questionAnalysis": ""
     },
     {
-      questionGenre: "虚拟交互题",
-      eventId: "",
-      questionGenreId: "6",
-      questionId: "1684889690206842881",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        '{"checkLocation":"风机控制系统","checkProject":"相序保护器","checkRequest":"接线端子外观完好","checkMethod":"目视"}',
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "正常",
-      questionChoselist: "",
-      questionSumscore: "4",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "表格判断题",
-      questionAnalysis: "",
-    },
-    {
-      questionGenre: "虚拟交互题",
-      eventId: "",
-      questionGenreId: "6",
-      questionId: "1691981327886135297",
-      questionKnowpoint: "",
-      memo: "",
-      questionScore: "",
-      questionName:
-        "<p>请将【变频器】与电机、PLC进行模拟连线，并将连接的端子号输入到对应的输入框。</p>",
-      deleteFlag: 0,
-      courseName: "电气单元",
-      questionAnswer: "U$V$W$AO.2$AO.3",
-      questionChoselist:
-        "<p>U</p>$<p>V</p>$<p>W</p>$<p>MM440.24</p>$<p>MM440.25</p>",
-      questionSumscore: "4",
-      courseId: "1",
-      questionDiff: "初级",
-      questionType: "连线识别题",
-      questionAnalysis: "",
-    },
-  ];
+        "questionGenre": "虚拟交互题",
+        "questionId": "1742044591298859009",
+        "questionKnowpoint": "",
+        "memo": "",
+        "deleteFlag": 0,
+        "questionChoselist": "",
+        "courseId": "1",
+        "data9": "0",
+        "data8": "0",
+        "eventId": "",
+        "data7": "0",
+        "data6": "0",
+        "questionGenreId": "6",
+        "data5": "0",
+        "data4": "1",
+        "data3": "1",
+        "data2": "1",
+        "data1": "12",
+        "questionScore": "",
+        "questionName": "<p><img id=\"bigImg\" src=\"http://101.42.247.53:8080/jeecg-boot/sys/common/static/jeditor/fbd8bb86001db706bb1392f3c23776e_1704171054129.png\" width=\"296\" height=\"287\" /></p>",
+        "courseName": "电气单元",
+        "questionAnswer": "",
+        "data10": "1",
+        "questionSumscore": "",
+        "isReturnAnswer": 0,
+        "questionDiff": "初级",
+        "questionType": "图片交互题",
+        "questionAnalysis": ""
+    }
+];
   console.log("第一步", data.dataSource);
   sliceAnswer();
   tableData = data.dataSource;
@@ -1780,33 +2093,147 @@ function totalStatistics() {
   ).toString();
 }
 
-function isSplit (nodes, index, pageHeight) {
-      // 计算当前这块dom是否跨越了a4大小，以此分割
-      return !!(nodes[index].offsetTop + nodes[index].offsetHeight < pageHeight && nodes[index + 1] && nodes[index + 1].offsetTop + nodes[index + 1].offsetHeight > pageHeight);
+
+let zancunH = [];
+function isSplit(nodes, index, pageHeight) {
+  if (nodes[index].offsetTop + nodes[index].scrollHeight < pageHeight && nodes[index + 1] && nodes[index + 1].offsetTop + nodes[index + 1].scrollHeight > pageHeight) {
+        return true;
+    } else {
+        return false;
     }
 
-
-
-
-function exportPDF (dom, filename) {
-    const scale = 2
-
-    // 滚动到顶部，避免打印不全
-    document.documentElement.scrollTop = 0
-
-    html2Canvas(report.value, {
-        allowTaint: true, // Whether to allow cross-origin images to taint the canvas
-        scale // The scale to use for rendering. Defaults to the browsers device pixel ratio.
-    }).then((canvas) => {
-        const contentWidth = canvas.width / scale
-        const contentHeight = canvas.height / scale
-        const pdf = new JsPDF('', 'pt', [contentWidth, contentHeight])
-        const pageData = canvas.toDataURL('image/jpeg', 1.0)
-
-        pdf.addImage(pageData, 'JPEG', 0, 0, contentWidth, contentHeight)
-        pdf.save(`${filename}.pdf`)
-    })
 }
+
+function outPutPdfFn() {
+  document.body.scrollTop = 0;
+  document.body.scrollLeft = 0;
+  // 获取滚动条的位置并赋值为 0，因为是 el-dialog 弹框，并且内容较多出现了纵向的滚动条，截图出来的效果只能截取到视图窗口显示的部分，超出窗口部分则无法生成。所以先将滚动条置顶
+  const A4_WIDTH = 592.28;
+  const A4_HEIGHT = 841.89;
+  let imageWrapper = document.getElementById('demo');
+
+  let pageHeight = (imageWrapper.scrollWidth / A4_WIDTH) * A4_HEIGHT;
+  let lableListID = imageWrapper.querySelectorAll('.sign');
+  console.log('lableListID11', lableListID[10].offsetTop );
+  console.log('pageHeight', pageHeight );
+  console.log('offsetHeight',  imageWrapper.offsetHeight );
+  console.log('scrollHeight',  imageWrapper.scrollHeight );
+  // 进行分割操作，当 dom 内容已超出 A4 的高度，则将该 dom 前插入一个空 dom，把它挤下去，分割
+  console.log('lableListID33', lableListID[33].offsetTop );
+  console.log('lableListID33', lableListID[33].scrollHeight );
+  console.log('lableListID34', lableListID[34].offsetTop );
+  console.log('lableListID34', lableListID[34].scrollHeight );
+  console.log('--------------',lableListID[34].offsetTop + lableListID[34].scrollHeight );
+  console.log('lableListID35', lableListID[35].offsetTop );
+  console.log('lableListID35', lableListID[35].scrollHeight );
+  console.log('lableListID68', lableListID[68].offsetTop );
+  console.log('lableListID68', lableListID[68].scrollHeight );
+  console.log('lableListID69', lableListID[69].offsetTop );
+  console.log('lableListID69', lableListID[69].scrollHeight );
+  console.log('--------------',lableListID[69].offsetTop + lableListID[69].scrollHeight );
+  console.log('lableListID70', lableListID[70].offsetTop );
+  console.log('lableListID70', lableListID[70].scrollHeight );
+  console.log('lableListID88', lableListID[88].offsetTop );
+  console.log('lableListID88', lableListID[88].scrollHeight );
+  console.log('lableListID89', lableListID[89].offsetTop );
+  console.log('lableListID89', lableListID[89].scrollHeight );
+  console.log('--------------',lableListID[89].offsetTop + lableListID[89].scrollHeight );
+  console.log('lableListID90', lableListID[90].offsetTop );
+  console.log('lableListID90', lableListID[90].scrollHeight );
+  zancunH[0] = 0;
+  for (let i = 0; i < lableListID.length; i++) {
+
+
+    let multiple = Math.ceil((lableListID[i].offsetTop + lableListID[i].scrollHeight) / pageHeight);
+    console.log(`multiple`, multiple);
+
+    // console.log(`此时multiple的值${multiple}`);
+    if (isSplit(lableListID, i, multiple * pageHeight)) {
+      console.log(`父节点${i}，`, lableListID[i].parentNode);
+      console.log(`multiple`, multiple * pageHeight);
+      console.log(`lableListID[i]`, lableListID[i].offsetTop + lableListID[i].scrollHeight);
+      console.log(`[i]高度差`, multiple * pageHeight- lableListID[i].offsetTop - lableListID[i].scrollHeight);
+      console.log(`lableListID[i+1]`, lableListID[i + 1].offsetTop + lableListID[i + 1].scrollHeight);
+      console.log(`[i+1]高度差`, lableListID[i + 1].offsetTop + lableListID[i + 1].scrollHeight - multiple * pageHeight);
+      console.log(`[i]  [i+1]高度差`, lableListID[i + 1].offsetTop + lableListID[i + 1].scrollHeight - lableListID[i].offsetTop - lableListID[i].scrollHeight);
+      let divParent = lableListID[i].parentNode; // 获取该 div 的父节点
+      let newNode = document.createElement('div');
+      newNode.className = 'emptyDiv';
+      newNode.style.background = '#ffffff';
+      let _H = multiple * pageHeight - (lableListID[i].offsetTop + lableListID[i].scrollHeight);
+      console.log('留白高度', _H);
+      zancunH[multiple] = _H;
+      // console.log('留白高度', _H);
+      // 留白
+      let zancunH1 = 0;
+      // for (let i = 0; i < zancunH.length - 1; i++) {
+      //   zancunH1 = zancunH1 + zancunH[i];
+      // }
+      zancunH1 = _H
+      console.log('zancunH', zancunH);
+
+      newNode.style.height =  zancunH1 + 'px';
+      console.log('最终留白高度newNode', newNode.style.height);
+
+      newNode.style.width = '100%';
+      let next = lableListID[i].nextSibling; // 获取 div 的下一个兄弟节点
+      // 判断兄弟节点是否存在
+      if (next) {
+        // 存在则将新节点插入到 div 的下一个兄弟节点之前，即 div 之后
+        divParent.insertBefore(newNode, next);
+      } else {
+        // 不存在则直接添加到最后,appendChild 默认添加到 divParent 的最后
+        divParent.appendChild(newNode);
+      }
+    }
+  }
+  // 接下来开始截图
+  html2Canvas(imageWrapper, {
+    allowTaint: true,
+    x: imageWrapper.getBoundingClientRect().left + 13, // 绘制的 dom 元素相对于视口的位置
+    y: imageWrapper.getBoundingClientRect().top,
+    width: imageWrapper.offsetWidth - 15, // 因为多出的需要剪裁掉，
+    height: imageWrapper.offsetHeight,
+    backgroundColor: '#FFF', // 一定要设置背景颜色，否则有的浏览器就会变花~，比如 Edge
+    useCORS: true,
+    scale: 3, // 图片模糊
+    dpi: 350, // z
+  })
+    .then((canvas) => {
+      let pdf = new JsPDF('p', 'mm', 'a4'); // A4 纸，纵向
+      let ctx = canvas.getContext('2d'),
+        a4w = 190,
+        a4h = 270, // A4 大小，210mm x 297mm，四边各保留 10mm 的边距，显示区域 190x277
+        imgHeight = Math.floor((a4h * canvas.width) / a4w), // 按 A4显示比例换算一页图像的像素高度
+        renderedHeight = 0;
+
+      while (renderedHeight < canvas.height) {
+        let page = document.createElement('canvas');
+        page.width = canvas.width;
+        page.height = Math.min(imgHeight, canvas.height - renderedHeight); // 可能内容不足一页
+        // 用 getImageData 剪裁指定区域，并画到前面创建的 canvas 对象中
+        page
+          .getContext('2d')
+          .putImageData(ctx.getImageData(0, renderedHeight, canvas.width, Math.min(imgHeight, canvas.height - renderedHeight)), 0, 0);
+        pdf.addImage(page.toDataURL('image/jpeg', 0.2), 'JPEG', 10, 10, a4w, Math.min(a4h, (a4w * page.height) / page.width)); // 添加图像到页面，保留 10mm 边距
+        renderedHeight += imgHeight;
+        if (renderedHeight < canvas.height) pdf.addPage(); // 如果后面还有内容，添加一个空页
+      }
+      pdf.save('paperDownName');
+    })
+    .then(() => {
+      ElMessage({
+        message: '文件下载成功',
+        type: 'success',
+      });
+    })
+    .catch((error) => {
+      // 保存失败
+      console.error('PDF 文件保存失败:', error);
+      ElMessage.error('文件下载失败');
+    });
+}
+
 // let { qDiffList, qTypeList, qGenreList } = toRefs(data);
 </script>
 

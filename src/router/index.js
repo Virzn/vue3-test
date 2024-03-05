@@ -27,6 +27,12 @@ const routes = [
     // 路由懒加载
     component: () => import(/* webpackChunkName: "uploadTest" */ '../views/uploadTest.vue')
   },
+  {
+    path: '/drawTable',
+    name: 'drawTable',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/drawTable.vue')
+  },
 ]
 
 const router = createRouter({

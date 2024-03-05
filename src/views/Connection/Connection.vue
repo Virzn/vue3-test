@@ -1,29 +1,27 @@
 <template>
+  <!-- 页面标题 -->
   <h3>jsplumb使用</h3>
+  <!-- 容器用于放置节点 -->
   <div id="container">
+    <!-- 左侧列，显示模型轴节点 -->
     <div class="col1">
-      <div
-        v-for="item in list1"
-        :key="item.nodeId"
-        :id="item.nodeId"
-        name="joint"
-      >
+      <!-- 循环渲染模型轴节点 -->
+      <div v-for="item in list1" :key="item.nodeId" :id="item.nodeId" name="joint">
         {{ item.name }}
       </div>
     </div>
+    <!-- 右侧列，显示接口数据点节点 -->
     <div class="col2">
-      <div
-        v-for="item in list2"
-        :key="item.nodeId"
-        :id="item.nodeId"
-        name="data"
-      >
+      <!-- 循环渲染接口数据点节点 -->
+      <div v-for="item in list2" :key="item.nodeId" :id="item.nodeId" name="data">
         {{ item.name }}
       </div>
     </div>
   </div>
+  <!-- 点击按钮触发获取连接信息方法 -->
   <el-button @click="getConnectInfo">按钮</el-button>
 </template>
+
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import jsPlumb from "jsplumb";
@@ -31,9 +29,10 @@ import jsPlumb from "jsplumb";
 // 存储连接信息
 const connections = [];
 
-//jsplumb使用
+// jsplumb使用
 let $jsPlumb = jsPlumb.jsPlumb;
 let jsPlumb_instance = null; // 缓存实例化的jsplumb对象
+
 //模型轴
 const list1 = reactive([
   { name: "选项1", nodeId: "name1", axis: "", type: "" },
@@ -77,92 +76,99 @@ const list2 = reactive([
   { name: "数据18", nodeId: "数据18" },
 ]);
 
+// 组件挂载完成后执行
 onMounted(() => {
-  showPlumb();
+  showPlumb(); // 展示jsplumb效果
 });
 
+// 获取连接信息方法
 function getConnectInfo() {
   console.log("连接信息", connections);
 }
 
+// 展示jsplumb效果方法
 const showPlumb = () => {
+  // 实例化jsplumb对象
   jsPlumb_instance = $jsPlumb.getInstance({
     Container: "container", // 选择器id
     EndpointStyle: { radius: 0.11, fill: "#fff" }, // 端点样式
-    Connector: "Bezier",
-    PaintStyle: { strokeWidth: 2, stroke: "#000", joinstyle: "round" },
-    HoverPaintStyle: { stroke: "#1E90FF" }, // 默认悬停样式  默认为null
-    DrapOptions: { cursor: "crosshair", zIndex: 2000 },
+    Connector: "Bezier", // 连接器类型
+    PaintStyle: { strokeWidth: 2, stroke: "#000", joinstyle: "round" }, // 绘制样式
+    HoverPaintStyle: { stroke: "#1E90FF" }, // 默认悬停样式
+    DrapOptions: { cursor: "crosshair", zIndex: 2000 }, // 拖拽选项
   });
 
+  // 批量处理节点初始化
   jsPlumb_instance.batch(() => {
     for (let i = 0; i < list1.length; i++) {
-      initLeaf(list1[i].nodeId, "joint", i);
+      initLeaf(list1[i].nodeId, "joint", i); // 初始化模型轴节点
     }
     for (let i = 0; i < list2.length; i++) {
-      initLeaf(list2[i].nodeId, "data", i);
+      initLeaf(list2[i].nodeId, "data", i); // 初始化接口数据点节点
     }
   });
 
+  // 设置节点是否可连接
   const joint = document.getElementsByName("joint");
   const data = document.getElementsByName("data");
-
   jsPlumb_instance.setSourceEnabled(joint, true);
   jsPlumb_instance.setTargetEnabled(data, true);
-  jsPlumb_instance.setDraggable(joint, false); // 是否支持拖拽
-  jsPlumb_instance.setDraggable(data, false); // 是否支持拖拽
 
+  // 设置节点是否可拖拽
+  jsPlumb_instance.setDraggable(joint, false);
+  jsPlumb_instance.setDraggable(data, false);
+
+  // 监听连接点击事件
   jsPlumb_instance.bind("click", (conn, originalEvent) => {
-    jsPlumb_instance.deleteConnection(conn);
+    jsPlumb_instance.deleteConnection(conn); // 删除连接
     console.log("click事件");
   });
 
+  // 监听连接建立事件
   jsPlumb_instance.bind("connection", (connection) => {
-    const sourceId = connection.source.id; // 起点元素的 ID
-    const targetId = connection.target.id; // 终点元素的 ID
-    connections.push({ sourceId, targetId }); // 将 source.id 和 target.id 值存储到数组中
+    const sourceId = connection.source.id;
+    const targetId = connection.target.id;
+    connections.push({ sourceId, targetId }); // 存储连接信息
   });
 
+  // 监听连接断开事件
   jsPlumb_instance.bind("connectionDetached", (connection) => {
-    const sourceId = connection.source.id; // 起点元素的 ID
-    const targetId = connection.target.id; // 终点元素的 ID
+    const sourceId = connection.source.id;
+    const targetId = connection.target.id;
     for (let i = 0; i < connections.length; i++) {
       const connection = connections[i];
-      if (
-        connection.sourceId === sourceId &&
-        connection.targetId === targetId
-      ) {
-        connections.splice(i, 1); // 从数组中删除对应的信息
+      if (connection.sourceId === sourceId && connection.targetId === targetId) {
+        connections.splice(i, 1); // 从数组中删除对应的连接信息
         break;
       }
     }
   });
 };
 
-// 初始化具体节点
+// 初始化具体节点方法
 const initLeaf = (id, type, index) => {
   const ins = jsPlumb_instance;
   const elem = document.getElementById(id);
   const baseOffset = 10; // 基础偏移量
   const offset = baseOffset + index * 10; // 根据索引计算偏移量
-  console.log("index", index);
   if (type == "joint") {
     ins.makeSource(elem, {
       anchor: "Bottom", // 锚点位于底部中心位置
       allowLoopback: false,
       maxConnections: 1,
-      connector: ["Flowchart", { stub: [0, offset, 0, 0], cornerRadius: 10 }], // 连接线类型为Flowchart，连接线的起点向下偏移 offset 个像素，连接线在转折处形成90度角，终点向下偏移 0 个像素
+      connector: ["Flowchart", { stub: [0, offset, 0, 0], cornerRadius: 10 }], // 连接线类型为Flowchart
     });
   } else {
     ins.makeTarget(elem, {
       anchor: "Bottom", // 锚点位于顶部中心位置
       allowLoopback: false,
       maxConnections: 1,
-      connector: ["Flowchart", { stub: [0, -offset, 0, 0], cornerRadius: 10 }], // 连接线类型为Flowchart，连接线的起点向上偏移 offset 个像素，连接线在转折处形成90度角，终点向上偏移 0 个像素
+      connector: ["Flowchart", { stub: [0, -offset, 0, 0], cornerRadius: 10 }], // 连接线类型为Flowchart
     });
   }
 };
 </script>
+
 
 <style scoped lang="less">
 #container {

@@ -2,12 +2,6 @@
   <el-button @click="tanchaung">按钮</el-button>
   <el-dialog v-model="tcxianshi" width="60%">
     <el-form :model="formState" ref="ruleFormRef1" :rules="rules">
-      <el-form-item label="计划名称:" label-width="100px" prop="planName">
-        <el-input v-model="formState.planName" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="预算金额:" label-width="100px" prop="budgeteAmount">
-        <el-input v-model="formState.budgeteAmount" autocomplete="off" />
-      </el-form-item>
       <el-form-item label="文件:" label-width="100px" prop="laplTime">
         <div class="fileFormItem">
           <ul class="fileListUl">
@@ -50,15 +44,6 @@
           </el-upload>
         </div>
       </el-form-item>
-      <el-form-item label="计划名称:" label-width="100px" prop="planName">
-        <el-input v-model="formState.planName" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="计划名称:" label-width="100px" prop="planName">
-        <el-input v-model="formState.planName" autocomplete="off" />
-      </el-form-item>
-      <el-form-item label="计划名称:" label-width="100px" prop="planName">
-        <el-input v-model="formState.planName" autocomplete="off" />
-      </el-form-item>
     </el-form>
   </el-dialog>
 </template>
@@ -67,59 +52,8 @@ import { ref, toRefs, reactive, toRaw } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 
 let data = reactive({
-  dataSource: [],
-  columns: [
-    {
-      title: "计划编号",
-      align: "center",
-      dataIndex: "planId",
-    },
-    {
-      title: "计划名称",
-      align: "center",
-      dataIndex: "planName",
-    },
-    {
-      title: "计划类型",
-      align: "center",
-      dataIndex: "planType",
-    },
-    {
-      title: "发布时间",
-      align: "center",
-      dataIndex: "laplTime",
-    },
-    {
-      title: "预算金额",
-      align: "center",
-      dataIndex: "budgeteAmount",
-    },
-    {
-      title: "操作",
-      dataIndex: "action",
-      align: "center",
-    },
-  ],
   formState: {
-    planName: "",
-    planType: "",
-    budgeteAmount: "",
-    laplTime: "",
   },
-  pagination: {
-    defaultPageSize: 10, //默认的每页条数
-    total: 16, //数据总数
-    size: "small", //分页尺寸
-    showSizeChanger: true, //是否可以改变 pageSize
-    pageSizeOptions: ["10", "50", "80", "100"], //指定每页可以显示多少条
-    showQuickJumper: true, //是否可以快速跳转至某页
-    showTotal: (total) => `共 ${total} 条`,
-  },
-  showDrawer: false, //抽屉显示
-  showAddDialog: false, //添加对话框显示
-  showEditDialog: false, //编辑对话框显示
-  editplanId: "",
-  total: 0,
 });
 
 const ruleFormRef1 = ref();
@@ -210,7 +144,7 @@ const handleSuccess = (file, uploadFiles) => {
 
 
 
-let { showAddDialog, formState, editplanId, showEditDialog } = toRefs(data);
+let {formState } = toRefs(data);
 </script>
 
 <style lang="less" scoped>
@@ -252,7 +186,7 @@ let { showAddDialog, formState, editplanId, showEditDialog } = toRefs(data);
 
     .deleteIcon{
       position: relative;
-      font-size: 5px;
+      font-size: 15px;
       color: cornflowerblue;
       padding-left: 100px;
       // right: 0;

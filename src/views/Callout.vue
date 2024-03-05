@@ -7,7 +7,6 @@
         <img id="bigImg" src="../assets/logo.png" width="200" height="200" />
         <canvas id="canvas" ref="markCanvasRef"></canvas>
       </div>
-
       <el-button type="primary" style="margin: 20px" @click="saveData">保存数据</el-button>
     </div>
     <!-- 标注区域 -->
@@ -18,6 +17,7 @@
     </div>
   </div>
 </template>
+
 <script setup>
 
 import { ref, onMounted, reactive, nextTick } from "vue";
@@ -38,8 +38,8 @@ const markCanvasRef = ref(null);
 
 //画布初始化
 const initCanvas = () => {
- // 使用setTimeout延迟执行，确保在DOM渲染完成后再执行
- setTimeout(() => {
+  // 使用setTimeout延迟执行，确保在DOM渲染完成后再执行
+  setTimeout(() => {
     // 使用nextTick确保在Vue渲染周期的下一个tick执行
     nextTick(() => {
       // 输出当前元素，用于调试
@@ -69,7 +69,7 @@ const initCanvas = () => {
       }
 
       console.log("cav ,list ", cav, list);
-      
+
       // 调用封装的绘制方法
       draw(cav, list);
     });
@@ -139,7 +139,7 @@ function createMarker(points) {
 // Vue 生命周期钩子函数，组件挂载后执行
 onMounted(() => {
   initCanvas(); // 画布初始化
- // 初始化标记点
+  // 初始化标记点
   const initpoints = [
     {
       x: 117,
@@ -166,7 +166,7 @@ onMounted(() => {
     }
     return false;
   }; //阻止冒泡行为和默认右键菜单事件
-  
+
   // 鼠标点击事件监听，用于标注
   document.getElementById("myBiaoZhu").onmousedown = (e) => {
     e = e || window.event;
@@ -201,6 +201,7 @@ onMounted(() => {
   };
 });
 </script>
+
 <style lang="less" scoped>
 .wholeDiv {
   display: flex;

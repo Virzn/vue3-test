@@ -33,6 +33,48 @@ const routes = [
     // 路由懒加载
     component: () => import(/* webpackChunkName: "uploadTest" */ '../views/drawTable.vue')
   },
+  {
+    path: '/chat',
+    name: 'chat',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/chat.vue')
+  },
+  {
+    path: '/float',
+    name: 'float',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/float.vue')
+  },
+  {
+    path: '/center',
+    name: 'center',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/center.vue')
+  },
+  {
+    path: '/shengbei',
+    name: 'shengbei',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/shengbei.vue')
+  },
+  {
+    path: '/shuangfeiyi',
+    name: 'shuangfeiyi',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/shuangfeiyi.vue')
+  },
+  {
+    path: '/twoC',
+    name: 'twoC',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/twoC.vue')
+  },
+  {
+    path: '/threeC',
+    name: 'threeC',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/threeC.vue')
+  },
 ]
 
 const router = createRouter({

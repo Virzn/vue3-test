@@ -1,0 +1,51 @@
+<!-- 
+<html >
+<head>
+  <style>
+    .triangle {
+      width: 0;
+      height: 0;
+      border-left: 50px solid transparent; /* 左边框为透明 */
+      border-right: 50px solid transparent; /* 右边框为透明 */
+      border-bottom: 100px solid red; /* 底边框为实心，这里是红色 */
+    }
+  </style>
+</head>
+<body>
+  <div class="triangle"></div>
+</body>
+</html> -->
+
+<html>
+
+<head>
+  <style>
+    .container {
+      position: relative;
+      width: 50%;
+      /* 或者其他适当的宽度 */
+      padding-top: 50%;
+      /* 使用相对单位设置容器的高度，使其与宽度成比例 */
+      background-color: lightgray;
+      /* 容器的背景颜色，用于显示容器的边界 */
+    }
+
+    .square {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      /* 正方形的宽度与容器的宽度相等 */
+      height: 100%;
+      /* 正方形的高度与容器的高度相等 */
+      background-color: blue;
+      /* 正方形的背景颜色 */
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container"><div class="square"></div></div>
+</body>
+
+</html>

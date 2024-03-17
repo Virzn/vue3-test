@@ -1,11 +1,17 @@
 <template>
   <div style="background-color: aliceblue;">
+    <div id="ifmh1">你好</div>
     <div id="chatWhole">
-      <div id="messageWhole">
+      <div id="messageWhole" ref="messageWhole">
         <div v-for="(message, index) in messages" :key="index" :class="message.sender">
           <div class="messageContent">
             <!-- 使用 v-html 渲染消息内容 -->
             <p v-html="formatMessage(message.content)"></p>
+          </div>
+        </div>
+        <div class="robot" v-show="isAnswering">
+          <div class="messageContent">
+            <p>AI模型正在生成回答....</p>
           </div>
         </div>
       </div>
@@ -18,11 +24,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref,nextTick } from 'vue';
 
 const messages = ref([]);
 const userMessage = ref('');
 const isSending = ref(false);
+const messageWhole = ref(null); // 引用messageWhole元素
+
 
 function sendMessage() {
   if (userMessage.value.trim() !== '' && !isSending.value) {
@@ -30,11 +38,16 @@ function sendMessage() {
     messages.value.push({ sender: 'user', content: userMessage.value });
     console.log('userMessage: ' , userMessage.value);
     userMessage.value = '';
+    scrollToBottom(); // 在机器人回复后滚动
     setTimeout(() => {
       messages.value.push({ sender: 'robot', content: '自动回复' });
       isSending.value = false;
-    }, 1000);
+      console.log('messages', messages.value);
+      scrollToBottom(); // 在机器人回复后滚动
+    }, 100);
   }
+
+  
 }
 
 function handleEnter(event) {
@@ -50,6 +63,15 @@ function handleEnter(event) {
 // 格式化消息内容，将换行符转换为 <br> 标签
 function formatMessage(content) {
   return content.replace(/\n/g, '<br>');
+}
+
+// 使用$nextTick方法滚动到底部
+function scrollToBottom() {
+  nextTick(() => {
+    if (messageWhole.value !== null) {
+      messageWhole.value.scrollTop = messageWhole.value.scrollHeight;
+    }
+  });
 }
 </script>
 

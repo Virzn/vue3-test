@@ -75,6 +75,18 @@ const routes = [
     // 路由懒加载
     component: () => import(/* webpackChunkName: "uploadTest" */ '../views/CSS/threeC.vue')
   },
+  {
+    path: '/iframeText',
+    name: 'iframeText',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/iframeText.vue')
+  },
+  {
+    path: '/iframeText1',
+    name: 'iframeText1',
+    // 路由懒加载
+    component: () => import(/* webpackChunkName: "uploadTest" */ '../views/iframeText1.vue')
+  },
 ]
 
 const router = createRouter({

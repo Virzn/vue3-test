@@ -1,113 +1,49 @@
-// 长度最小的子数组
-function minSubArray(target, nums){
-  let start = 0, end = 0, sum = 0, min = Infinity, len = nums.length;
-  while(end < len){
-    sum += nums[end];
-    while(sum >= target){
-      min = Math.min(min, end - start + 1);
-      sum -= nums[start];
-      start++
+class Event{
+  constructor(){
+    // 使用一个对象保存事件名和对应回调函数列表
+    this.events = {};
+  }
+  // 订阅事件，将事件名和对应的回调函数添加到事件列表中
+  on(eventName, callBack){
+    if(!this.events[eventName]){
+      // 事件名不存在就创建一个空表
+      this.events[eventName] = [];
     }
-    end++
-  }
-  return min === Infinity ? 0 : min
-}
-
-// 单链表初始化
-function ListNode(val, next){
-  this.val = (val === undefined ? 0 : val);
-  this.next = (next === undefined ? 0 : next)
-}
-
-// 删除链表的倒数第n个节点
-function removenNumNode(head, n){
-  let ret = new ListNode(0, head);
-  let num = 0
-  let temp = ret
-  while(temp){
-    num ++ 
-    temp = temp.next;
+    // 将回调函数添加到事件列表中
+    this.events[eventName].push(callBack);
+    // 返回回调函数本身，用于取消订阅
+    return callBack;
   }
 
-  let target = num - n + 1
-  temp = ret
-  while(target > 0){
-    if(target ==1){
-      temp.next = temp.next.next
-    }else{
-      temp = temp.next
+  // 取消订阅事件，将事件名和回调函数从时间列表中移除
+  off(eventName, callBackRemove){
+    if(!this.events[eventName]){
+      // 事件名不存在就直接返回
+      return;
     }
-    target--
+    // 用filter过滤到对应的回调事件，保留 callBack != callBackRemove
+    this.events[eventName] = this.events[eventName].filter(callBack => callBack != callBackRemove)
   }
-  return ret.next
-}
 
-//   let res = new Array(n).fill(0).map(() => new Array(n).fill(0))
-// 环形链表
-function detectCycle(head){
-  let slow = head, fast= head
-  while(fast && fast.next){
-    fast = fast.next
-    slow = slow.next
-    if(fast == slow){
-      slow = head
-      while(slow !== fast){
-        slow = slow.next
-        fast = fast.next
-        return slow
-      }
+  // 触发事件，执行对应的事件名下的所有回调函数
+  emit(eventName, ...args){
+    // 检查事件名对应的回调函数列表是否存在
+    if (!this.events[eventName]) {
+        // 如果事件名对应的回调函数列表不存在，则直接返回
+        return;
     }
-  }
-  return null
-}
-
-// 有效的字母异位词
-function isAnagram(s, t){
-  if(s.length !== t.length){
-    return false
-  }
-  let resSet = new Array(26).fill(0)
-  let base = "a".charCodeAt();
-  for(let i of s){
-    resSet[i.charCodeAt() - base]++
-  }
-  for(let j of t){
-    if(!resSet[j.charCodeAt() -base]) return false
-    resSet[j.charCodeAt() - base]--
-  }
-  return true
-}
-
-
-// 两个数组的交集
-function intersection(nums1, nums2){
-  if(nums1.length < nums2.length){
-    let temp = nums1
-    nums1 = nums2
-    nums2 = temp
-  }
-  let res = []
-  for(let i = 0 ; i< nums2.length ; i++){
-    if(nums1.includes(nums2[i]) && !res.includes(nums2[i])){
-      res.push(nums2[i])
+    // 遍历事件列表中的每个回调函数，并执行它们，传入参数 args
+    for (const callback of this.events[eventName]) {
+        callback(...args);
     }
-  }
-  return res
+}
+}
+const e = new Event();
+
+function addCallback(a, b){
+  console.log(`${a} + ${b} = ${a + b}`)
 }
 
-// 两数之和
-function twoSum(nums, target){
-  let m = new Map()
-  for(let i = 0; i < nums.length; i++){
-    if(m.has(target - nums[i])){
-      return [m.get(target - nums[i]), i]
-    }else{
-      m.set(nums[i], i)
-    }
-  }
-}
-
-// 三树之和
-
-
-
+e.emit('add', 1, 2)
+e.off('add', addCallback)
+e.emit('add', 1, 2)

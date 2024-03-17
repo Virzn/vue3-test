@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>垂直水平居中的 div</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .centered-div {
+            width: 100px;
+            height: 100px;
+            background-color: lightblue;
+            transition: transform 0.3s ease; /* 添加过渡效果 */
+        }
+    </style>
+</head>
+<body>
+    <div class="centered-div">这是一个居中的 div</div>
+    <button onclick="moveRight()">向右移动</button>
+
+    <script>
+        function moveRight() {
+            var div = document.querySelector('.centered-div');
+            // 获取当前 div 的 transform 属性值
+            var transformValue = window.getComputedStyle(div).getPropertyValue('transform');
+            // 解析出当前的 x 坐标值
+            var matrix = transformValue.match(/^matrix\((.+)\)$/);
+            var x = matrix ? parseFloat(matrix[1].split(', ')[4]) : 0;
+
+            // 向右移动 100px
+            div.style.transform = 'translateX(' + (x + 100) + 'px)';
+        }
+    </script>
+</body>
+</html>

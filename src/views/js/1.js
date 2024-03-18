@@ -1,49 +1,61 @@
-class Event{
-  constructor(){
-    // 使用一个对象保存事件名和对应回调函数列表
-    this.events = {};
+function inputT(input) {
+  const lines = input.trim().split('\n')
+  const T = parseInt(lines[0], 10);
+  const res = []
+
+  let curLine = 1
+  for (let i = 0; i < T; i++) {
+    const n = parseInt(lines[curLine++], 10)
+    const monsterHealths = lines[curLine++].split(' ').map(h => parseInt(h, 10))
+    const [E, R] = lines[curLine++].split(' ').map(x => parseInt(x, 10))
+    res.push(monsterNum(monsterHealths, E, R))
+    console.log(monsterHealths, E, R)
+    console.log('1111)', monsterHealths)
+
   }
-  // 订阅事件，将事件名和对应的回调函数添加到事件列表中
-  on(eventName, callBack){
-    if(!this.events[eventName]){
-      // 事件名不存在就创建一个空表
-      this.events[eventName] = [];
+  return res.map(res => res.join(' ')).join('\n')
+}
+function monsterNum(monsterHealths, E, R) {
+  let sumE = 0, sumR = 0
+  let halfHealths = new Set();
+  let tempHealths = monsterHealths
+  while (monsterHealths.some(health => health > 0)) {
+    sumE++
+    let isR = false
+    for (let i = 0; i < monsterHealths.length; i++) {
+      monsterHealths[i] = monsterHealths[i] - E
+      if (monsterHealths[i] <= monsterHealths[i] * 0.5 && !halfHealths.has(i)) {
+        halfHealths.add(i)
+        isR = true
+      }
     }
-    // 将回调函数添加到事件列表中
-    this.events[eventName].push(callBack);
-    // 返回回调函数本身，用于取消订阅
-    return callBack;
+
+    while (isR) {
+      sumR++
+      isR = false
+      for (let i = 0; i < monsterHealths.length; i++) {
+        if (monsterHealths[i] > 0) {
+          monsterHealths[i] = monsterHealths[i] - R
+          if (monsterHealths[i] <= monsterHealths[i] * 0.5 && !halfHealths.has(i)) {
+            halfHealths.add(i)
+            isR = true
+          }
+        }
+      }
+    }
   }
-
-  // 取消订阅事件，将事件名和回调函数从时间列表中移除
-  off(eventName, callBackRemove){
-    if(!this.events[eventName]){
-      // 事件名不存在就直接返回
-      return;
-    }
-    // 用filter过滤到对应的回调事件，保留 callBack != callBackRemove
-    this.events[eventName] = this.events[eventName].filter(callBack => callBack != callBackRemove)
-  }
-
-  // 触发事件，执行对应的事件名下的所有回调函数
-  emit(eventName, ...args){
-    // 检查事件名对应的回调函数列表是否存在
-    if (!this.events[eventName]) {
-        // 如果事件名对应的回调函数列表不存在，则直接返回
-        return;
-    }
-    // 遍历事件列表中的每个回调函数，并执行它们，传入参数 args
-    for (const callback of this.events[eventName]) {
-        callback(...args);
-    }
-}
-}
-const e = new Event();
-
-function addCallback(a, b){
-  console.log(`${a} + ${b} = ${a + b}`)
+  return [sumE, sumR]
 }
 
-e.emit('add', 1, 2)
-e.off('add', addCallback)
-e.emit('add', 1, 2)
+let res = inputT(`3
+5
+100 50 60 80 70
+25 10
+5
+100 50 60 80 70
+20 20
+5
+100 200 300 4000 5000
+50 1000`)
+
+console.log('res',res)
